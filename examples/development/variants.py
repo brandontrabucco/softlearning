@@ -87,7 +87,7 @@ GAUSSIAN_POLICY_PARAMS_BASE = {
 TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK = {
     DEFAULT_KEY: int(1e4),
     'gym': {
-        DEFAULT_KEY: int(1e4),
+        DEFAULT_KEY: int(1e6),
         'Swimmer': {
             DEFAULT_KEY: int(1e3),
             'v3': int(1e3),

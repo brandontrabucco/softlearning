@@ -6,10 +6,39 @@ implementing a mujoco env, you would implement it under gym.mujoco submodule.
 """
 
 import gym
+from itertools import product
 
 
 CUSTOM_GYM_ENVIRONMENTS_PATH = __package__
 MUJOCO_ENVIRONMENTS_PATH = f'{CUSTOM_GYM_ENVIRONMENTS_PATH}.mujoco'
+
+
+THIGH_SIZES = [0.2, 0.4]
+ANKLE_SIZES = [0.4, 0.8]
+
+
+MORPHING_ANT_SPECS = (
+    {
+        'id': f'MorphingAnt_{a}_{b}_{c}_{d}_{e}_{f}_{g}_{h}-v0',
+        'entry_point': (f'{MUJOCO_ENVIRONMENTS_PATH}'
+                        '.morphing_ant:MorphingAntEnv'),
+        'kwargs': {
+            'thigh_size1': a,
+            'ankle_size1': b,
+            'thigh_size2': c,
+            'ankle_size2': d,
+            'thigh_size3': e,
+            'ankle_size3': f,
+            'thigh_size4': g,
+            'ankle_size4': h,
+        }
+    } for a, b, c, d, e, f, g, h in product(
+            THIGH_SIZES, ANKLE_SIZES,
+            THIGH_SIZES, ANKLE_SIZES,
+            THIGH_SIZES, ANKLE_SIZES,
+            THIGH_SIZES, ANKLE_SIZES
+    )
+)
 
 MUJOCO_ENVIRONMENT_SPECS = (
     {
@@ -61,6 +90,7 @@ MUJOCO_ENVIRONMENT_SPECS = (
         'entry_point': (f'{MUJOCO_ENVIRONMENTS_PATH}'
                         '.image_pusher_2d:BlindForkReacher2dEnv'),
     },
+    *MORPHING_ANT_SPECS
 )
 
 GENERAL_ENVIRONMENT_SPECS = (
