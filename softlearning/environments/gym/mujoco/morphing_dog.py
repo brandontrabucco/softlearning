@@ -20,16 +20,14 @@ Leg = namedtuple("Leg", [
     "thigh_upper",
     "ankle_lower",
     "ankle_upper",
-    "hip_size",
     "thigh_size",
     "ankle_size",
-    "reflect",
 ])
 
 
 DEFAULT_DOG = [
     Leg(x=-0.4,
-        y=0.,
+        y=-0.2,
         z=0.0,
         a=0,
         b=0,
@@ -40,12 +38,10 @@ DEFAULT_DOG = [
         thigh_lower=55,
         ankle_upper=-60,
         ankle_lower=-120,
-        hip_size=0.2,
         thigh_size=0.4,
-        ankle_size=0.4,
-        reflect=False),
+        ankle_size=0.4),
     Leg(x=0.4,
-        y=0.0,
+        y=-0.2,
         z=0.0,
         a=0,
         b=0,
@@ -56,12 +52,10 @@ DEFAULT_DOG = [
         thigh_lower=55,
         ankle_upper=-60,
         ankle_lower=-120,
-        hip_size=0.2,
         thigh_size=0.4,
-        ankle_size=0.4,
-        reflect=True),
+        ankle_size=0.4),
     Leg(x=0.4,
-        y=0.0,
+        y=0.2,
         z=0.0,
         a=0,
         b=0,
@@ -72,12 +66,10 @@ DEFAULT_DOG = [
         thigh_lower=55,
         ankle_upper=-60,
         ankle_lower=-120,
-        hip_size=0.2,
         thigh_size=0.4,
-        ankle_size=0.4,
-        reflect=False),
+        ankle_size=0.4),
     Leg(x=-0.4,
-        y=0.0,
+        y=0.2,
         z=0.0,
         a=0,
         b=0,
@@ -88,10 +80,8 @@ DEFAULT_DOG = [
         thigh_lower=55,
         ankle_upper=-60,
         ankle_lower=-120,
-        hip_size=0.2,
         thigh_size=0.4,
-        ankle_size=0.4,
-        reflect=True),
+        ankle_size=0.4),
 ]
 
 
@@ -120,25 +110,6 @@ class MorphingDogEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
             ET.SubElement(
                 leg_i_body,
-                "geom",
-                pos=f"0.0 0.0 0.0",
-                fromto=f"0.0 -{leg.hip_size} 0.0 0.0 0.0 0.0"
-                if leg.reflect else
-                f"0.0 0.0 0.0 0.0 {leg.hip_size} 0.0",
-                name=f"leg_{i}_geom",
-                size="0.08",
-                type="capsule",
-            )
-
-            thigh_i_body = ET.SubElement(
-                leg_i_body,
-                "body",
-                name=f"thigh_{i}_body",
-                pos=f"0 -{leg.hip_size} 0" if leg.reflect else f"0 {leg.hip_size} 0"
-            )
-
-            ET.SubElement(
-                thigh_i_body,
                 "joint",
                 axis="1 0 0",
                 name=f"hip_{i}_joint",
@@ -148,7 +119,7 @@ class MorphingDogEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             )
 
             ET.SubElement(
-                thigh_i_body,
+                leg_i_body,
                 "joint",
                 axis="0 1 0",
                 name=f"thigh_{i}_joint",
@@ -158,7 +129,7 @@ class MorphingDogEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             )
 
             ET.SubElement(
-                thigh_i_body,
+                leg_i_body,
                 "geom",
                 fromto=f"0.0 0.0 -{leg.thigh_size} 0.0 0.0 0.0",
                 name=f"thigh_{i}_geom",
@@ -167,7 +138,7 @@ class MorphingDogEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             )
 
             ankle_i_body = ET.SubElement(
-                thigh_i_body,
+                leg_i_body,
                 "body",
                 pos=f"0 0 -{leg.thigh_size}",
                 name=f"ankle_{i}_geom",
