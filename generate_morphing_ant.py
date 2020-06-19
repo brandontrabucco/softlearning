@@ -30,6 +30,6 @@ if __name__ == '__main__':
             '--universe', 'gym',
             '--domain', 'MorphingAnt',
             '--task', 'v0',
-            '--exp-name', f'morphing-dog-{i}',
+            '--exp-name', f'morphing-ant-{i}',
             '--checkpoint-frequency', '1000',
             '--mode=local'))
