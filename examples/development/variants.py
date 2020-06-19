@@ -7,6 +7,8 @@ import numpy as np
 from softlearning.utils.git import get_git_rev
 from softlearning.utils.misc import get_host_name
 from softlearning.utils.dict import deep_update
+from softlearning.environments.gym.mujoco.morphing_dog import DEFAULT_DOG
+from softlearning.environments.gym.mujoco.morphing_ant import DEFAULT_ANT
 
 DEFAULT_KEY = "__DEFAULT_KEY__"
 
@@ -121,6 +123,14 @@ TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK = {
         'Point2DEnv': {
             DEFAULT_KEY: int(5e4),
         },
+        'MorphingAnt': {
+            DEFAULT_KEY: int(1e6),
+            'v0': int(1e6),
+        },
+        'MorphingDog': {
+            DEFAULT_KEY: int(1e6),
+            'v0': int(1e6),
+        },
     },
     'dm_control': {
         # BENCHMARKING
@@ -227,16 +237,32 @@ MAX_PATH_LENGTH_PER_UNIVERSE_DOMAIN_TASK = {
         'Pendulum': {
             DEFAULT_KEY: 200,
         },
+        'MorphingAnt': {
+            DEFAULT_KEY: 1000,
+            'v0': 1000,
+        },
+        'MorphingDog': {
+            DEFAULT_KEY: 1000,
+            'v0': 1000,
+        },
     },
 }
 
 EPOCH_LENGTH_PER_UNIVERSE_DOMAIN_TASK = {
     DEFAULT_KEY: 1000,
     'gym': {
-        DEFAULT_KEY: 25000,
+        DEFAULT_KEY: 10000,
         'Pendulum': {
             DEFAULT_KEY: 1000,
             'v0': 1000,
+        },
+        'MorphingAnt': {
+            DEFAULT_KEY: 10000,
+            'v0': 10000,
+        },
+        'MorphingDog': {
+            DEFAULT_KEY: 10000,
+            'v0': 10000,
         },
     },
 }
@@ -257,6 +283,16 @@ ENVIRONMENT_PARAMS_PER_UNIVERSE_DOMAIN_TASK = {
                 'healthy_reward': 0.0,
                 'healthy_z_range': (-np.inf, np.inf),
                 'exclude_current_positions_from_observation': False,
+            }
+        },
+        'MorphingAnt': {
+            'v0': {
+                'legs': DEFAULT_ANT,
+            }
+        },
+        'MorphingDog': {
+            'v0': {
+                'legs': DEFAULT_DOG,
             }
         },
         'Humanoid': {  # 17 DoF
