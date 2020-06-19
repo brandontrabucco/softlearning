@@ -35,7 +35,7 @@ DEFAULT_DOG = [
         hip_upper=30,
         hip_lower=-30,
         thigh_upper=75,
-        thigh_lower=55,
+        thigh_lower=15,
         ankle_upper=-60,
         ankle_lower=-120,
         thigh_size=0.4,
@@ -49,7 +49,7 @@ DEFAULT_DOG = [
         hip_upper=30,
         hip_lower=-30,
         thigh_upper=75,
-        thigh_lower=55,
+        thigh_lower=15,
         ankle_upper=-60,
         ankle_lower=-120,
         thigh_size=0.4,
@@ -63,7 +63,7 @@ DEFAULT_DOG = [
         hip_upper=30,
         hip_lower=-30,
         thigh_upper=75,
-        thigh_lower=55,
+        thigh_lower=15,
         ankle_upper=-60,
         ankle_lower=-120,
         thigh_size=0.4,
@@ -77,12 +77,48 @@ DEFAULT_DOG = [
         hip_upper=30,
         hip_lower=-30,
         thigh_upper=75,
-        thigh_lower=55,
+        thigh_lower=15,
         ankle_upper=-60,
         ankle_lower=-120,
         thigh_size=0.4,
         ankle_size=0.4),
 ]
+
+
+LOWER_BOUND = Leg(
+    x=-0.4,
+    y=-0.2,
+    z=0,
+    a=0,
+    b=0,
+    c=10,
+    hip_upper=20,
+    hip_lower=-40,
+    thigh_upper=65,
+    thigh_lower=5,
+    ankle_upper=-70,
+    ankle_lower=-130,
+    thigh_size=0.2,
+    ankle_size=0.2
+)
+
+
+UPPER_BOUND = Leg(
+    x=0.4,
+    y=0.2,
+    z=0,
+    a=0,
+    b=0,
+    c=-10,
+    hip_upper=40,
+    hip_lower=-20,
+    thigh_upper=85,
+    thigh_lower=25,
+    ankle_upper=-50,
+    ankle_lower=-110,
+    thigh_size=0.4,
+    ankle_size=0.4
+)
 
 
 class MorphingDogEnv(mujoco_env.MujocoEnv, utils.EzPickle):
