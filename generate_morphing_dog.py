@@ -78,4 +78,4 @@ if __name__ == '__main__':
         '--cpus', f'{num_cpus}',
         '--gpus', f'{num_gpus}',
         '--trial-cpus', f'{num_cpus // args.num_parallel}',
-        '--trial-gpus', f'{num_gpus / args.num_parallel}'))
+        '--trial-gpus', f'{num_gpus / args.num_parallel - 0.01}'))
