@@ -4,7 +4,6 @@ from softlearning.environments.gym.mujoco.morphing_ant import DEFAULT_ANT
 from softlearning.environments.gym.mujoco.morphing_ant import UPPER_BOUND
 from softlearning.environments.gym.mujoco.morphing_ant import LOWER_BOUND
 from softlearning.environments.gym.mujoco.morphing_ant import Leg
-from examples.instrument import run_example_local
 from examples.instrument import generate_experiment_kwargs
 
 
@@ -30,29 +29,20 @@ if __name__ == '__main__':
         trainable_class = example_module.get_trainable_class(example_args)
 
         experiment_kwargs = generate_experiment_kwargs(variant_spec, example_args)
-
-        dataset_id = list(range(args.dataset_size))
+        experiment_kwargs['config'][
+            'dataset_id'] = tune.grid_search(list(range(args.dataset_size)))
 
         legs_spec = []
-        for i in dataset_id:
+        for i in range(args.dataset_size):
             if i == 0 and len(DEFAULT_ANT) == args.num_legs:
                 legs_spec.append(DEFAULT_ANT)
             else:
                 legs_spec.append([Leg(*np.random.uniform(
                     LOWER_BOUND, UPPER_BOUND)) for _ in range(args.num_legs)])
 
-        experiment_kwargs['config']['dataset_id'] = tune.grid_search(dataset_id)
-
         experiment_kwargs['config'][
             'environment_params'][
             'training'][
-            'kwargs'][
-            'legs'] = tune.sample_from(
-                lambda spec: legs_spec[spec.config.dataset_id])
-
-        experiment_kwargs['config'][
-            'environment_params'][
-            'evaluation'][
             'kwargs'][
             'legs'] = tune.sample_from(
                 lambda spec: legs_spec[spec.config.dataset_id])
@@ -73,7 +63,7 @@ if __name__ == '__main__':
             scheduler=None,
             reuse_actors=True)
 
-    run_example_local('examples.development', (
+    run_example('examples.development', (
         '--algorithm', 'SAC',
         '--universe', 'gym',
         '--domain', 'MorphingAnt',
