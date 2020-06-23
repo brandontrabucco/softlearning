@@ -1,15 +1,17 @@
-import numpy as np
-import argparse
 from softlearning.environments.gym.mujoco.morphing_ant import DEFAULT_ANT
 from softlearning.environments.gym.mujoco.morphing_ant import UPPER_BOUND
 from softlearning.environments.gym.mujoco.morphing_ant import LOWER_BOUND
 from softlearning.environments.gym.mujoco.morphing_ant import Leg
 from examples.instrument import generate_experiment_kwargs
+from ray import tune
 
 
+import numpy as np
+import argparse
 import importlib
 import ray
-from ray import tune
+import multiprocessing
+import tensorflow as tf
 
 
 if __name__ == '__main__':
@@ -19,6 +21,14 @@ if __name__ == '__main__':
     parser.add_argument('--dataset_size', type=int, default=5)
     parser.add_argument('--num_parallel', type=int, default=5)
     args = parser.parse_args()
+
+    LEGS_SPEC = []
+    for i in range(args.dataset_size):
+        if i == 0 and len(DEFAULT_ANT) == args.num_legs:
+            LEGS_SPEC.append(DEFAULT_ANT)
+        else:
+            LEGS_SPEC.append([Leg(*np.random.uniform(
+                LOWER_BOUND, UPPER_BOUND)) for _ in range(args.num_legs)])
 
     def run_example(example_module_name, example_argv, local_mode=False):
         """Run example locally, potentially parallelizing across cpus/gpus."""
@@ -32,20 +42,12 @@ if __name__ == '__main__':
         experiment_kwargs['config'][
             'dataset_id'] = tune.grid_search(list(range(args.dataset_size)))
 
-        legs_spec = []
-        for i in range(args.dataset_size):
-            if i == 0 and len(DEFAULT_ANT) == args.num_legs:
-                legs_spec.append(DEFAULT_ANT)
-            else:
-                legs_spec.append([Leg(*np.random.uniform(
-                    LOWER_BOUND, UPPER_BOUND)) for _ in range(args.num_legs)])
-
         experiment_kwargs['config'][
             'environment_params'][
             'training'][
             'kwargs'][
             'legs'] = tune.sample_from(
-                lambda spec: legs_spec[spec.config.dataset_id])
+                lambda spec: LEGS_SPEC[spec.config.dataset_id])
 
         ray.init(
             num_cpus=example_args.cpus,
@@ -63,6 +65,8 @@ if __name__ == '__main__':
             scheduler=None,
             reuse_actors=True)
 
+    num_cpus = multiprocessing.cpu_count()
+    num_gpus = len(tf.config.list_physical_devices('GPU'))
     run_example('examples.development', (
         '--algorithm', 'SAC',
         '--universe', 'gym',
@@ -71,7 +75,7 @@ if __name__ == '__main__':
         '--exp-name', f'morphing-ant',
         '--checkpoint-frequency', '1000',
         '--mode=local',
-        '--cpus', '24',
-        '--gpus', '2',
-        '--trial-cpus', '2',
-        '--trial-gpus', '0.166'))
+        '--cpus', f'{num_cpus}',
+        '--gpus', f'{num_gpus}',
+        '--trial-cpus', f'{num_cpus // args.num_parallel}',
+        '--trial-gpus', f'{num_gpus / args.num_parallel}'))
