@@ -57,97 +57,97 @@ Leg = namedtuple("Leg", [
 
 
 DEFAULT_DKITTY = (
-    Leg(x=0.09,
-        y=0.122,
+    Leg(x=0,
+        y=0,
         z=0,
         a=0,
-        b=-3.14,
+        b=0,
         c=0,
-        hip_upper=0.279,
-        hip_lower=-0.5,
-        thigh_upper=PI / 2,
+        hip_upper=0.0,
+        hip_lower=-0.0,
+        thigh_upper=0.0,
         thigh_lower=0.0,
         ankle_upper=0.0,
-        ankle_lower=-2.0,
-        thigh_size=0.0965,
-        ankle_size=0.0945),
-    Leg(x=-0.09,
-        y=0.122,
+        ankle_lower=0.0,
+        thigh_size=0.0,
+        ankle_size=0.0),
+    Leg(x=0,
+        y=0,
         z=0,
         a=0,
-        b=3.14,
+        b=0,
         c=0,
-        hip_upper=0.5,
-        hip_lower=-0.279,
-        thigh_upper=PI / 2,
+        hip_upper=0.0,
+        hip_lower=-0.0,
+        thigh_upper=0.0,
         thigh_lower=0.0,
         ankle_upper=0.0,
-        ankle_lower=-2.0,
-        thigh_size=0.0965,
-        ankle_size=0.0945),
-    Leg(x=-0.09,
-        y=-0.122,
+        ankle_lower=0.0,
+        thigh_size=0.0,
+        ankle_size=0.0),
+    Leg(x=0,
+        y=0,
         z=0,
         a=0,
-        b=3.14,
+        b=0,
         c=0,
-        hip_upper=0.5,
-        hip_lower=-0.279,
-        thigh_upper=PI / 2,
+        hip_upper=0.0,
+        hip_lower=-0.0,
+        thigh_upper=0.0,
         thigh_lower=0.0,
         ankle_upper=0.0,
-        ankle_lower=-2.0,
-        thigh_size=0.0965,
-        ankle_size=0.0945),
-    Leg(x=0.09,
-        y=-0.122,
+        ankle_lower=0.0,
+        thigh_size=0.0,
+        ankle_size=0.0),
+    Leg(x=0,
+        y=0,
         z=0,
         a=0,
-        b=-3.14,
+        b=0,
         c=0,
-        hip_upper=0.279,
-        hip_lower=-0.5,
-        thigh_upper=PI / 2,
+        hip_upper=0.0,
+        hip_lower=-0.0,
+        thigh_upper=0.0,
         thigh_lower=0.0,
         ankle_upper=0.0,
-        ankle_lower=-2.0,
-        thigh_size=0.0965,
-        ankle_size=0.0945),
+        ankle_lower=0.0,
+        thigh_size=0.0,
+        ankle_size=0.0),
 )
 
 
 UPPER_BOUND = Leg(
-    x=0.09,
-    y=0.122,
+    x=0.05,
+    y=0.05,
     z=0,
-    a=0,
-    b=3.14,
-    c=0,
-    hip_upper=0.5,
+    a=PI / 4,
+    b=PI / 4,
+    c=PI / 4,
+    hip_upper=0.0,
     hip_lower=0.0,
-    thigh_upper=PI / 2,
+    thigh_upper=0.0,
     thigh_lower=0.0,
     ankle_upper=0.0,
-    ankle_lower=-2.0,
-    thigh_size=0.0965,
-    ankle_size=0.0945)
+    ankle_lower=0.0,
+    thigh_size=0.0,
+    ankle_size=0.0)
 
 
 LOWER_BOUND = Leg(
-    x=-0.09,
-    y=-0.122,
+    x=-0.05,
+    y=-0.05,
     z=0,
-    a=0,
-    b=-3.14,
-    c=0,
+    a=-PI / 4,
+    b=-PI / 4,
+    c=-PI / 4,
     hip_upper=0.0,
-    hip_lower=-0.5,
-    thigh_upper=PI / 2,
+    hip_lower=0.0,
+    thigh_upper=0.0,
     thigh_lower=0.0,
     ankle_upper=0.0,
-    ankle_lower=-2.0,
-    thigh_size=0.0965,
-    ankle_size=0.0945)
+    ankle_lower=0.0,
+    thigh_size=0.0,
+    ankle_size=0.0)
 
 
 def load_xml_tree(xml_path):
@@ -178,6 +178,20 @@ def load_xml_tree(xml_path):
         return root
 
 
+"""
+
+<geom class="viz_metal_black" euler="1.57 -1.57 0" mesh="x430_dkitty_2" pos=".08 -0.121 0"/>
+<geom class="viz_metal_black" euler="-1.57 -1.57 0" mesh="x430_dkitty_2" pos=".08 0.121 0"/>
+<geom class="viz_metal_black" euler="1.57 1.57 0" mesh="x430_dkitty_2" pos="-.08 0.121 0"/>
+<geom class="viz_metal_black" euler="-1.57 1.57 0" mesh="x430_dkitty_2" pos="-.08 -0.121 0"/>
+<geom class="collision" pos="0.078 -0.122 0" size="0.024 0.018 0.015" type="box" mass=".086"/>
+<geom class="collision" pos="-0.078 -0.122 0" size="0.024 0.018 0.015" type="box" mass=".086"/>
+<geom class="collision" pos="-0.078 0.122 0" size="0.024 0.018 0.015" type="box" mass=".086"/>
+<geom class="collision" pos="0.078 0.122 0" size="0.024 0.018 0.015" type="box" mass=".086"/>
+
+"""
+
+
 class MorphingDKittyEnv(BaseDKittyEnv):
     """Base environment for all DKitty morphology tasks."""
 
@@ -194,101 +208,101 @@ class MorphingDKittyEnv(BaseDKittyEnv):
         spec = legs[0]
         leg = tree.find(".//body[@name='A:FR10']")
 
-        leg.attrib['pos'] = f"{spec.x} {spec.y} {spec.z}"
-        leg.attrib['euler'] = f"{spec.a} {spec.b} {spec.c}"
+        leg.attrib['pos'] = f"{spec.x + 0.09} {spec.y + 0.122} {spec.z}"
+        leg.attrib['euler'] = f"{spec.a} {spec.b - 3.14} {spec.c}"
         leg_joint = tree.find(".//joint[@name='A:FRJ10']")
-        leg_joint.attrib['range'] = f"{spec.hip_lower} {spec.hip_upper}"
+        leg_joint.attrib['range'] = f"{spec.hip_lower - 0.5} {spec.hip_upper + 0.279}"
         leg_ctrl = tree.find(".//position[@name='A:FRJ10']")
-        leg_ctrl.attrib['ctrlrange'] = f"{spec.hip_lower} {spec.hip_upper}"
+        leg_ctrl.attrib['ctrlrange'] = f"{spec.hip_lower - 0.5} {spec.hip_upper + 0.279}"
 
         thigh = tree.find(".//body[@name='A:FR11']")
-        thigh.attrib['pos'] = f"0 0 {spec.thigh_size}"
+        thigh.attrib['pos'] = f"0 0 {spec.thigh_size + 0.0965}"
         thigh_joint = tree.find(".//joint[@name='A:FRJ11']")
-        thigh_joint.attrib['range'] = f"{spec.thigh_lower} {spec.thigh_upper}"
+        thigh_joint.attrib['range'] = f"{spec.thigh_lower} {spec.thigh_upper + PI / 2}"
         thigh_ctrl = tree.find(".//position[@name='A:FRJ11']")
-        thigh_ctrl.attrib['ctrlrange'] = f"{spec.thigh_lower} {spec.thigh_upper}"
+        thigh_ctrl.attrib['ctrlrange'] = f"{spec.thigh_lower} {spec.thigh_upper + PI / 2}"
 
         ankle = tree.find(".//body[@name='A:FR12']")
-        ankle.attrib['pos'] = f"0 0 {spec.ankle_size}"
+        ankle.attrib['pos'] = f"0 0 {spec.ankle_size + 0.0945}"
         ankle_joint = tree.find(".//joint[@name='A:FRJ12']")
-        ankle_joint.attrib['range'] = f"{spec.ankle_lower} {spec.ankle_upper}"
+        ankle_joint.attrib['range'] = f"{spec.ankle_lower - 2.0} {spec.ankle_upper}"
         ankle_ctrl = tree.find(".//position[@name='A:FRJ12']")
-        ankle_ctrl.attrib['ctrlrange'] = f"{spec.ankle_lower} {spec.ankle_upper}"
+        ankle_ctrl.attrib['ctrlrange'] = f"{spec.ankle_lower - 2.0} {spec.ankle_upper}"
 
         # modify settings for Front Left Leg
         spec = legs[1]
         leg = tree.find(".//body[@name='A:FL20']")
 
-        leg.attrib['pos'] = f"{spec.x} {spec.y} {spec.z}"
-        leg.attrib['euler'] = f"{spec.a} {spec.b} {spec.c}"
+        leg.attrib['pos'] = f"{spec.x - 0.09} {spec.y + 0.122} {spec.z}"
+        leg.attrib['euler'] = f"{spec.a} {spec.b + 3.14} {spec.c}"
         leg_joint = tree.find(".//joint[@name='A:FLJ20']")
-        leg_joint.attrib['range'] = f"{spec.hip_lower} {spec.hip_upper}"
+        leg_joint.attrib['range'] = f"{spec.hip_lower - 0.279} {spec.hip_upper + 0.5}"
         leg_ctrl = tree.find(".//position[@name='A:FLJ20']")
-        leg_ctrl.attrib['ctrlrange'] = f"{spec.hip_lower} {spec.hip_upper}"
+        leg_ctrl.attrib['ctrlrange'] = f"{spec.hip_lower - 0.279} {spec.hip_upper + 0.5}"
 
         thigh = tree.find(".//body[@name='A:FL21']")
-        thigh.attrib['pos'] = f"0 0 {spec.thigh_size}"
+        thigh.attrib['pos'] = f"0 0 {spec.thigh_size + 0.0965}"
         thigh_joint = tree.find(".//joint[@name='A:FLJ21']")
-        thigh_joint.attrib['range'] = f"{spec.thigh_lower} {spec.thigh_upper}"
+        thigh_joint.attrib['range'] = f"{spec.thigh_lower} {spec.thigh_upper + PI / 2}"
         thigh_ctrl = tree.find(".//position[@name='A:FLJ21']")
-        thigh_ctrl.attrib['ctrlrange'] = f"{spec.thigh_lower} {spec.thigh_upper}"
+        thigh_ctrl.attrib['ctrlrange'] = f"{spec.thigh_lower} {spec.thigh_upper + PI / 2}"
 
         ankle = tree.find(".//body[@name='A:FL22']")
-        ankle.attrib['pos'] = f"0 0 {spec.ankle_size}"
+        ankle.attrib['pos'] = f"0 0 {spec.ankle_size + 0.0945}"
         ankle_joint = tree.find(".//joint[@name='A:FLJ22']")
-        ankle_joint.attrib['range'] = f"{spec.ankle_lower} {spec.ankle_upper}"
+        ankle_joint.attrib['range'] = f"{spec.ankle_lower - 2.0} {spec.ankle_upper}"
         ankle_ctrl = tree.find(".//position[@name='A:FLJ22']")
-        ankle_ctrl.attrib['ctrlrange'] = f"{spec.ankle_lower} {spec.ankle_upper}"
+        ankle_ctrl.attrib['ctrlrange'] = f"{spec.ankle_lower - 2.0} {spec.ankle_upper}"
 
         # modify settings for Back Left Leg
         spec = legs[2]
         leg = tree.find(".//body[@name='A:BL30']")
 
-        leg.attrib['pos'] = f"{spec.x} {spec.y} {spec.z}"
-        leg.attrib['euler'] = f"{spec.a} {spec.b} {spec.c}"
+        leg.attrib['pos'] = f"{spec.x - 0.09} {spec.y - 0.122} {spec.z}"
+        leg.attrib['euler'] = f"{spec.a} {spec.b + 3.14} {spec.c}"
         leg_joint = tree.find(".//joint[@name='A:BLJ30']")
-        leg_joint.attrib['range'] = f"{spec.hip_lower} {spec.hip_upper}"
+        leg_joint.attrib['range'] = f"{spec.hip_lower - 0.279} {spec.hip_upper + 0.5}"
         leg_ctrl = tree.find(".//position[@name='A:BLJ30']")
-        leg_ctrl.attrib['ctrlrange'] = f"{spec.hip_lower} {spec.hip_upper}"
+        leg_ctrl.attrib['ctrlrange'] = f"{spec.hip_lower - 0.279} {spec.hip_upper + 0.5}"
 
         thigh = tree.find(".//body[@name='A:BL31']")
-        thigh.attrib['pos'] = f"0 0 {spec.thigh_size}"
+        thigh.attrib['pos'] = f"0 0 {spec.thigh_size + 0.0965}"
         thigh_joint = tree.find(".//joint[@name='A:BLJ31']")
-        thigh_joint.attrib['range'] = f"{spec.thigh_lower} {spec.thigh_upper}"
+        thigh_joint.attrib['range'] = f"{spec.thigh_lower} {spec.thigh_upper + PI / 2}"
         thigh_ctrl = tree.find(".//position[@name='A:BLJ31']")
-        thigh_ctrl.attrib['ctrlrange'] = f"{spec.thigh_lower} {spec.thigh_upper}"
+        thigh_ctrl.attrib['ctrlrange'] = f"{spec.thigh_lower} {spec.thigh_upper + PI / 2}"
 
         ankle = tree.find(".//body[@name='A:BL32']")
-        ankle.attrib['pos'] = f"0 0 {spec.ankle_size}"
+        ankle.attrib['pos'] = f"0 0 {spec.ankle_size + 0.0945}"
         ankle_joint = tree.find(".//joint[@name='A:BLJ32']")
-        ankle_joint.attrib['range'] = f"{spec.ankle_lower} {spec.ankle_upper}"
+        ankle_joint.attrib['range'] = f"{spec.ankle_lower - 2.0} {spec.ankle_upper}"
         ankle_ctrl = tree.find(".//position[@name='A:BLJ32']")
-        ankle_ctrl.attrib['ctrlrange'] = f"{spec.ankle_lower} {spec.ankle_upper}"
+        ankle_ctrl.attrib['ctrlrange'] = f"{spec.ankle_lower - 2.0} {spec.ankle_upper}"
 
         # modify settings for Back Right Leg
         spec = legs[3]
         leg = tree.find(".//body[@name='A:BR40']")
 
-        leg.attrib['pos'] = f"{spec.x} {spec.y} {spec.z}"
-        leg.attrib['euler'] = f"{spec.a} {spec.b} {spec.c}"
+        leg.attrib['pos'] = f"{spec.x + 0.09} {spec.y - 0.122} {spec.z}"
+        leg.attrib['euler'] = f"{spec.a} {spec.b - 3.14} {spec.c}"
         leg_joint = tree.find(".//joint[@name='A:BRJ40']")
-        leg_joint.attrib['range'] = f"{spec.hip_lower} {spec.hip_upper}"
+        leg_joint.attrib['range'] = f"{spec.hip_lower - 0.5} {spec.hip_upper + 0.279}"
         leg_ctrl = tree.find(".//position[@name='A:BRJ40']")
-        leg_ctrl.attrib['ctrlrange'] = f"{spec.hip_lower} {spec.hip_upper}"
+        leg_ctrl.attrib['ctrlrange'] = f"{spec.hip_lower - 0.5} {spec.hip_upper + 0.279}"
 
         thigh = tree.find(".//body[@name='A:BR41']")
-        thigh.attrib['pos'] = f"0 0 {spec.thigh_size}"
+        thigh.attrib['pos'] = f"0 0 {spec.thigh_size + 0.0965}"
         thigh_joint = tree.find(".//joint[@name='A:BRJ41']")
-        thigh_joint.attrib['range'] = f"{spec.thigh_lower} {spec.thigh_upper}"
+        thigh_joint.attrib['range'] = f"{spec.thigh_lower} {spec.thigh_upper + PI / 2}"
         thigh_ctrl = tree.find(".//position[@name='A:BRJ41']")
-        thigh_ctrl.attrib['ctrlrange'] = f"{spec.thigh_lower} {spec.thigh_upper}"
+        thigh_ctrl.attrib['ctrlrange'] = f"{spec.thigh_lower} {spec.thigh_upper + PI / 2}"
 
         ankle = tree.find(".//body[@name='A:BR42']")
-        ankle.attrib['pos'] = f"0 0 {spec.ankle_size}"
+        ankle.attrib['pos'] = f"0 0 {spec.ankle_size + 0.0945}"
         ankle_joint = tree.find(".//joint[@name='A:BRJ42']")
-        ankle_joint.attrib['range'] = f"{spec.ankle_lower} {spec.ankle_upper}"
+        ankle_joint.attrib['range'] = f"{spec.ankle_lower - 2.0} {spec.ankle_upper}"
         ankle_ctrl = tree.find(".//position[@name='A:BRJ42']")
-        ankle_ctrl.attrib['ctrlrange'] = f"{spec.ankle_lower} {spec.ankle_upper}"
+        ankle_ctrl.attrib['ctrlrange'] = f"{spec.ankle_lower - 2.0} {spec.ankle_upper}"
 
         _, file_path = tempfile.mkstemp(text=True,
                                         suffix='.xml',
@@ -319,21 +333,21 @@ class MorphingDKittyEnv(BaseDKittyEnv):
             qpos_indices=range(6, 18),
             qpos_range=[
                 # FR
-                (self._legs[0].hip_lower,   self._legs[0].hip_upper),
-                (self._legs[0].thigh_lower, self._legs[0].thigh_upper),
-                (self._legs[0].ankle_lower, self._legs[0].ankle_upper),
+                (self._legs[0].hip_lower - 0.5, self._legs[0].hip_upper + 0.279),
+                (self._legs[0].thigh_lower, self._legs[0].thigh_upper + PI / 2),
+                (self._legs[0].ankle_lower - 2.0, self._legs[0].ankle_upper),
                 # FL
-                (self._legs[1].hip_lower,   self._legs[1].hip_upper),
-                (self._legs[1].thigh_lower, self._legs[1].thigh_upper),
-                (self._legs[1].ankle_lower, self._legs[1].ankle_upper),
+                (self._legs[1].hip_lower - 0.279,  self._legs[1].hip_upper + 0.5),
+                (self._legs[1].thigh_lower, self._legs[1].thigh_upper + PI / 2),
+                (self._legs[1].ankle_lower - 2.0, self._legs[1].ankle_upper),
                 # BL
-                (self._legs[2].hip_lower,   self._legs[2].hip_upper),
-                (self._legs[2].thigh_lower, self._legs[2].thigh_upper),
-                (self._legs[2].ankle_lower, self._legs[2].ankle_upper),
+                (self._legs[2].hip_lower - 0.279,   self._legs[2].hip_upper + 0.5),
+                (self._legs[2].thigh_lower, self._legs[2].thigh_upper + PI / 2),
+                (self._legs[2].ankle_lower - 2.0, self._legs[2].ankle_upper),
                 # BR
-                (self._legs[3].hip_lower,   self._legs[3].hip_upper),
-                (self._legs[3].thigh_lower, self._legs[3].thigh_upper),
-                (self._legs[3].ankle_lower, self._legs[3].ankle_upper),
+                (self._legs[3].hip_lower - 0.5,   self._legs[3].hip_upper + 0.279),
+                (self._legs[3].thigh_lower, self._legs[3].thigh_upper + PI / 2),
+                (self._legs[3].ankle_lower - 2.0, self._legs[3].ankle_upper),
             ],
             qvel_range=[(-PI, PI)] * 12,
         )

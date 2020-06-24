@@ -2,6 +2,7 @@ from softlearning.environments.gym.mujoco.morphing_dkitty import DEFAULT_DKITTY
 from softlearning.environments.gym.mujoco.morphing_dkitty import UPPER_BOUND
 from softlearning.environments.gym.mujoco.morphing_dkitty import LOWER_BOUND
 from softlearning.environments.gym.mujoco.morphing_dkitty import Leg
+from softlearning.environments.gym.mujoco.morphing_dkitty import MorphingDKittyWalkFixed
 from examples.instrument import generate_experiment_kwargs
 from ray import tune
 
