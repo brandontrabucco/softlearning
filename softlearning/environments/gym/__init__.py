@@ -72,6 +72,11 @@ MUJOCO_ENVIRONMENT_SPECS = (
         'entry_point': (f'{MUJOCO_ENVIRONMENTS_PATH}'
                         '.morphing_dog:MorphingDogEnv'),
     },
+    {
+        'id': 'MorphingDKitty-v0',
+        'entry_point': (f'{MUJOCO_ENVIRONMENTS_PATH}'
+                        '.morphing_dkitty:MorphingDKittyWalkFixed'),
+    },
 )
 
 GENERAL_ENVIRONMENT_SPECS = (
