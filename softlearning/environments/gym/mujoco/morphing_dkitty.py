@@ -181,6 +181,14 @@ def load_xml_tree(xml_path):
 class MorphingDKittyEnv(BaseDKittyEnv):
     """Base environment for all DKitty morphology tasks."""
 
+    def step(self, a):
+        """Hack to get the env to work with softlearning, which assumes
+        the info dict contains only scalars"""
+
+        o, r, d, i = super().step(a)
+        i = {key: value for key, value in i.items() if np.isscalar(value)}
+        return o, r, d, i
+
     def __init__(self,
                  sim_model,
                  legs=DEFAULT_DKITTY,
