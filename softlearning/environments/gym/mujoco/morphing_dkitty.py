@@ -1,8 +1,10 @@
 import abc
 import numpy as np
+import os
 import tempfile
 import collections
 import xml.etree.ElementTree as ET
+from xml.dom import minidom
 from collections import namedtuple
 from typing import Dict, Optional, Sequence, Tuple, Union
 
@@ -148,20 +150,47 @@ LOWER_BOUND = Leg(
     ankle_size=0.0945)
 
 
+def load_xml_tree(xml_path):
+    """Utility function for loading mujoco xml files that may contain
+    nested include tags
+
+    Args:
+
+    xml_path: str
+        a path to a mujoco xml file with include tags to be expanded
+
+    Returns:
+
+    tree: ElementTree.Element
+        an element that represents the root node of an xml tree
+    """
+
+    with open(xml_path, "r") as f:
+        root = ET.fromstringlist(f.readlines()[16:])
+        for c in root.findall(".//include"):
+            file = c.attrib['file']
+            target = os.path.join(os.path.dirname(xml_path), file)
+            p = root.find(f".//include[@file='{file}']...")
+            i = list(p).index(c)
+            p.remove(c)
+            for s in reversed(load_xml_tree(target)):
+                p.insert(i, s)
+        return root
+
+
 class MorphingDKittyEnv(BaseDKittyEnv):
     """Base environment for all DKitty morphology tasks."""
 
     def __init__(self,
-                 xml_path,
+                 sim_model,
                  legs=DEFAULT_DKITTY,
                  **kwargs):
 
         assert len(legs) == 4, "dkitty must always have 4 legs"
-        tree = ET.parse(xml_path)
         self._legs = legs
+        tree = ET.ElementTree(element=load_xml_tree(sim_model))
 
         # modify settings for Front Right Leg
-
         spec = legs[0]
         leg = tree.find(".//body[@name='A:FR10']")
 
@@ -169,19 +198,24 @@ class MorphingDKittyEnv(BaseDKittyEnv):
         leg.attrib['euler'] = f"{spec.a} {spec.b} {spec.c}"
         leg_joint = tree.find(".//joint[@name='A:FRJ10']")
         leg_joint.attrib['range'] = f"{spec.hip_lower} {spec.hip_upper}"
+        leg_ctrl = tree.find(".//position[@name='A:FRJ10']")
+        leg_ctrl.attrib['ctrlrange'] = f"{spec.hip_lower} {spec.hip_upper}"
 
         thigh = tree.find(".//body[@name='A:FR11']")
         thigh.attrib['pos'] = f"0 0 {spec.thigh_size}"
         thigh_joint = tree.find(".//joint[@name='A:FRJ11']")
         thigh_joint.attrib['range'] = f"{spec.thigh_lower} {spec.thigh_upper}"
+        thigh_ctrl = tree.find(".//position[@name='A:FRJ11']")
+        thigh_ctrl.attrib['ctrlrange'] = f"{spec.thigh_lower} {spec.thigh_upper}"
 
         ankle = tree.find(".//body[@name='A:FR12']")
         ankle.attrib['pos'] = f"0 0 {spec.ankle_size}"
         ankle_joint = tree.find(".//joint[@name='A:FRJ12']")
         ankle_joint.attrib['range'] = f"{spec.ankle_lower} {spec.ankle_upper}"
+        ankle_ctrl = tree.find(".//position[@name='A:FRJ12']")
+        ankle_ctrl.attrib['ctrlrange'] = f"{spec.ankle_lower} {spec.ankle_upper}"
 
         # modify settings for Front Left Leg
-
         spec = legs[1]
         leg = tree.find(".//body[@name='A:FL20']")
 
@@ -189,19 +223,24 @@ class MorphingDKittyEnv(BaseDKittyEnv):
         leg.attrib['euler'] = f"{spec.a} {spec.b} {spec.c}"
         leg_joint = tree.find(".//joint[@name='A:FLJ20']")
         leg_joint.attrib['range'] = f"{spec.hip_lower} {spec.hip_upper}"
+        leg_ctrl = tree.find(".//position[@name='A:FLJ20']")
+        leg_ctrl.attrib['ctrlrange'] = f"{spec.hip_lower} {spec.hip_upper}"
 
         thigh = tree.find(".//body[@name='A:FL21']")
         thigh.attrib['pos'] = f"0 0 {spec.thigh_size}"
         thigh_joint = tree.find(".//joint[@name='A:FLJ21']")
         thigh_joint.attrib['range'] = f"{spec.thigh_lower} {spec.thigh_upper}"
+        thigh_ctrl = tree.find(".//position[@name='A:FLJ21']")
+        thigh_ctrl.attrib['ctrlrange'] = f"{spec.thigh_lower} {spec.thigh_upper}"
 
         ankle = tree.find(".//body[@name='A:FL22']")
         ankle.attrib['pos'] = f"0 0 {spec.ankle_size}"
         ankle_joint = tree.find(".//joint[@name='A:FLJ22']")
         ankle_joint.attrib['range'] = f"{spec.ankle_lower} {spec.ankle_upper}"
+        ankle_ctrl = tree.find(".//position[@name='A:FLJ22']")
+        ankle_ctrl.attrib['ctrlrange'] = f"{spec.ankle_lower} {spec.ankle_upper}"
 
         # modify settings for Back Left Leg
-
         spec = legs[2]
         leg = tree.find(".//body[@name='A:BL30']")
 
@@ -209,19 +248,24 @@ class MorphingDKittyEnv(BaseDKittyEnv):
         leg.attrib['euler'] = f"{spec.a} {spec.b} {spec.c}"
         leg_joint = tree.find(".//joint[@name='A:BLJ30']")
         leg_joint.attrib['range'] = f"{spec.hip_lower} {spec.hip_upper}"
+        leg_ctrl = tree.find(".//position[@name='A:BLJ30']")
+        leg_ctrl.attrib['ctrlrange'] = f"{spec.hip_lower} {spec.hip_upper}"
 
         thigh = tree.find(".//body[@name='A:BL31']")
         thigh.attrib['pos'] = f"0 0 {spec.thigh_size}"
         thigh_joint = tree.find(".//joint[@name='A:BLJ31']")
         thigh_joint.attrib['range'] = f"{spec.thigh_lower} {spec.thigh_upper}"
+        thigh_ctrl = tree.find(".//position[@name='A:BLJ31']")
+        thigh_ctrl.attrib['ctrlrange'] = f"{spec.thigh_lower} {spec.thigh_upper}"
 
         ankle = tree.find(".//body[@name='A:BL32']")
         ankle.attrib['pos'] = f"0 0 {spec.ankle_size}"
         ankle_joint = tree.find(".//joint[@name='A:BLJ32']")
         ankle_joint.attrib['range'] = f"{spec.ankle_lower} {spec.ankle_upper}"
+        ankle_ctrl = tree.find(".//position[@name='A:BLJ32']")
+        ankle_ctrl.attrib['ctrlrange'] = f"{spec.ankle_lower} {spec.ankle_upper}"
 
         # modify settings for Back Right Leg
-
         spec = legs[3]
         leg = tree.find(".//body[@name='A:BR40']")
 
@@ -229,18 +273,26 @@ class MorphingDKittyEnv(BaseDKittyEnv):
         leg.attrib['euler'] = f"{spec.a} {spec.b} {spec.c}"
         leg_joint = tree.find(".//joint[@name='A:BRJ40']")
         leg_joint.attrib['range'] = f"{spec.hip_lower} {spec.hip_upper}"
+        leg_ctrl = tree.find(".//position[@name='A:BRJ40']")
+        leg_ctrl.attrib['ctrlrange'] = f"{spec.hip_lower} {spec.hip_upper}"
 
         thigh = tree.find(".//body[@name='A:BR41']")
         thigh.attrib['pos'] = f"0 0 {spec.thigh_size}"
         thigh_joint = tree.find(".//joint[@name='A:BRJ41']")
         thigh_joint.attrib['range'] = f"{spec.thigh_lower} {spec.thigh_upper}"
+        thigh_ctrl = tree.find(".//position[@name='A:BRJ41']")
+        thigh_ctrl.attrib['ctrlrange'] = f"{spec.thigh_lower} {spec.thigh_upper}"
 
         ankle = tree.find(".//body[@name='A:BR42']")
         ankle.attrib['pos'] = f"0 0 {spec.ankle_size}"
         ankle_joint = tree.find(".//joint[@name='A:BRJ42']")
         ankle_joint.attrib['range'] = f"{spec.ankle_lower} {spec.ankle_upper}"
+        ankle_ctrl = tree.find(".//position[@name='A:BRJ42']")
+        ankle_ctrl.attrib['ctrlrange'] = f"{spec.ankle_lower} {spec.ankle_upper}"
 
-        _, file_path = tempfile.mkstemp(text=True, suffix='.xml')
+        _, file_path = tempfile.mkstemp(text=True,
+                                        suffix='.xml',
+                                        dir=os.path.dirname(sim_model))
         tree.write(file_path)
 
         super().__init__(file_path, **kwargs)
@@ -267,19 +319,19 @@ class MorphingDKittyEnv(BaseDKittyEnv):
             qpos_indices=range(6, 18),
             qpos_range=[
                 # FR
-                (self._legs[0].hip_lower, self._legs[0].hip_upper),
+                (self._legs[0].hip_lower,   self._legs[0].hip_upper),
                 (self._legs[0].thigh_lower, self._legs[0].thigh_upper),
                 (self._legs[0].ankle_lower, self._legs[0].ankle_upper),
                 # FL
-                (self._legs[1].hip_lower, self._legs[1].hip_upper),
+                (self._legs[1].hip_lower,   self._legs[1].hip_upper),
                 (self._legs[1].thigh_lower, self._legs[1].thigh_upper),
                 (self._legs[1].ankle_lower, self._legs[1].ankle_upper),
                 # BL
-                (self._legs[2].hip_lower, self._legs[2].hip_upper),
+                (self._legs[2].hip_lower,   self._legs[2].hip_upper),
                 (self._legs[2].thigh_lower, self._legs[2].thigh_upper),
                 (self._legs[2].ankle_lower, self._legs[2].ankle_upper),
                 # BR
-                (self._legs[3].hip_lower, self._legs[3].hip_upper),
+                (self._legs[3].hip_lower,   self._legs[3].hip_upper),
                 (self._legs[3].thigh_lower, self._legs[3].thigh_upper),
                 (self._legs[3].ankle_lower, self._legs[3].ankle_upper),
             ],
