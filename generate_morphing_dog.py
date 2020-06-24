@@ -4,6 +4,7 @@ from softlearning.environments.gym.mujoco.morphing_dog import LOWER_BOUND
 from softlearning.environments.gym.mujoco.morphing_dog import Leg
 from examples.instrument import generate_experiment_kwargs
 from ray import tune
+from math import floor
 
 
 import numpy as np
@@ -78,4 +79,4 @@ if __name__ == '__main__':
         '--cpus', f'{num_cpus}',
         '--gpus', f'{num_gpus}',
         '--trial-cpus', f'{num_cpus // args.num_parallel}',
-        '--trial-gpus', f'{num_gpus / args.num_parallel - 0.01}'))
+        '--trial-gpus', f'{floor(num_gpus/args.num_parallel/0.1)*0.1}'))

@@ -178,20 +178,6 @@ def load_xml_tree(xml_path):
         return root
 
 
-"""
-
-<geom class="viz_metal_black" euler="1.57 -1.57 0" mesh="x430_dkitty_2" pos=".08 -0.121 0"/>
-<geom class="viz_metal_black" euler="-1.57 -1.57 0" mesh="x430_dkitty_2" pos=".08 0.121 0"/>
-<geom class="viz_metal_black" euler="1.57 1.57 0" mesh="x430_dkitty_2" pos="-.08 0.121 0"/>
-<geom class="viz_metal_black" euler="-1.57 1.57 0" mesh="x430_dkitty_2" pos="-.08 -0.121 0"/>
-<geom class="collision" pos="0.078 -0.122 0" size="0.024 0.018 0.015" type="box" mass=".086"/>
-<geom class="collision" pos="-0.078 -0.122 0" size="0.024 0.018 0.015" type="box" mass=".086"/>
-<geom class="collision" pos="-0.078 0.122 0" size="0.024 0.018 0.015" type="box" mass=".086"/>
-<geom class="collision" pos="0.078 0.122 0" size="0.024 0.018 0.015" type="box" mass=".086"/>
-
-"""
-
-
 class MorphingDKittyEnv(BaseDKittyEnv):
     """Base environment for all DKitty morphology tasks."""
 
@@ -203,6 +189,10 @@ class MorphingDKittyEnv(BaseDKittyEnv):
         assert len(legs) == 4, "dkitty must always have 4 legs"
         self._legs = legs
         tree = ET.ElementTree(element=load_xml_tree(sim_model))
+        root = tree.getroot()
+
+        # fix when many sims are running
+        ET.SubElement(root, "size", njmax="1200")
 
         # modify settings for Front Right Leg
         spec = legs[0]

@@ -2,9 +2,9 @@ from softlearning.environments.gym.mujoco.morphing_dkitty import DEFAULT_DKITTY
 from softlearning.environments.gym.mujoco.morphing_dkitty import UPPER_BOUND
 from softlearning.environments.gym.mujoco.morphing_dkitty import LOWER_BOUND
 from softlearning.environments.gym.mujoco.morphing_dkitty import Leg
-from softlearning.environments.gym.mujoco.morphing_dkitty import MorphingDKittyWalkFixed
 from examples.instrument import generate_experiment_kwargs
 from ray import tune
+from math import floor
 
 
 import numpy as np
@@ -19,8 +19,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser('MorphingDKitty')
     parser.add_argument('--num_legs', type=int, default=4)
-    parser.add_argument('--dataset_size', type=int, default=1)
-    parser.add_argument('--num_parallel', type=int, default=1)
+    parser.add_argument('--dataset_size', type=int, default=100)
+    parser.add_argument('--num_parallel', type=int, default=12)
     args = parser.parse_args()
 
     LEGS_SPEC = []
@@ -68,9 +68,6 @@ if __name__ == '__main__':
 
     num_cpus = multiprocessing.cpu_count()
     num_gpus = len(tf.config.list_physical_devices('GPU'))
-    per_gpu = max(0, num_gpus / args.num_parallel - 0.01)
-    if per_gpu > 1:
-        per_gpu = int(per_gpu)
     run_example('examples.development', (
         '--algorithm', 'SAC',
         '--universe', 'gym',
@@ -82,4 +79,4 @@ if __name__ == '__main__':
         '--cpus', f'{num_cpus}',
         '--gpus', f'{num_gpus}',
         '--trial-cpus', f'{num_cpus // args.num_parallel}',
-        '--trial-gpus', f'{per_gpu}'))
+        '--trial-gpus', f'{floor(num_gpus/args.num_parallel/0.1)*0.1}'))
