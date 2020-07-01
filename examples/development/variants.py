@@ -266,16 +266,16 @@ EPOCH_LENGTH_PER_UNIVERSE_DOMAIN_TASK = {
             'v0': 1000,
         },
         'MorphingAnt': {
-            DEFAULT_KEY: 10000,
-            'v0': 10000,
+            DEFAULT_KEY: 1000,
+            'v0': 1000,
         },
         'MorphingDog': {
-            DEFAULT_KEY: 10000,
-            'v0': 10000,
+            DEFAULT_KEY: 1000,
+            'v0': 1000,
         },
         'MorphingDKitty': {
-            DEFAULT_KEY: 10000,
-            'v0': 10000,
+            DEFAULT_KEY: 1000,
+            'v0': 1000,
         },
     },
 }
