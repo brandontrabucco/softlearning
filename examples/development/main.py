@@ -40,6 +40,7 @@ class ExperimentRunner(tune.Trainable):
 
         self.train_generator = None
         self._built = False
+        self._save_iteration = 0
 
     def _build(self):
         variant = copy.deepcopy(self._variant)
@@ -102,25 +103,20 @@ class ExperimentRunner(tune.Trainable):
 
         return diagnostics
 
-    @staticmethod
-    def _pickle_path(checkpoint_dir):
-        return os.path.join(checkpoint_dir, 'checkpoint.pkl')
+    def _pickle_path(self, checkpoint_dir):
+        return os.path.join(checkpoint_dir, f'checkpoint-{self._save_iteration}.pkl')
 
-    @staticmethod
-    def _algorithm_save_path(checkpoint_dir):
-        return os.path.join(checkpoint_dir, 'algorithm')
+    def _algorithm_save_path(self, checkpoint_dir):
+        return os.path.join(checkpoint_dir, f'algorithm-{self._save_iteration}')
 
-    @staticmethod
-    def _replay_pool_save_path(checkpoint_dir):
-        return os.path.join(checkpoint_dir, 'replay_pool.pkl')
+    def _replay_pool_save_path(self, checkpoint_dir):
+        return os.path.join(checkpoint_dir, f'replay_pool-{self._save_iteration}.pkl')
 
-    @staticmethod
-    def _sampler_save_path(checkpoint_dir):
-        return os.path.join(checkpoint_dir, 'sampler.pkl')
+    def _sampler_save_path(self, checkpoint_dir):
+        return os.path.join(checkpoint_dir, f'sampler-{self._save_iteration}.pkl')
 
-    @staticmethod
-    def _policy_save_path(checkpoint_dir):
-        return os.path.join(checkpoint_dir, 'policy')
+    def _policy_save_path(self, checkpoint_dir):
+        return os.path.join(checkpoint_dir, f'policy-{self._save_iteration}')
 
     def _save_replay_pool(self, checkpoint_dir):
         if not self._variant['run_params'].get(
@@ -162,7 +158,7 @@ class ExperimentRunner(tune.Trainable):
         tree.map_structure_with_path(
             lambda path, Q: Q.save_weights(
                 os.path.join(
-                    checkpoint_dir, '-'.join(('Q', *[str(x) for x in path]))),
+                    checkpoint_dir, '-'.join(('Q', *[str(x) for x in path])) + f"-{self._save_iteration}"),
                 save_format='tf'),
             self.Qs)
 
@@ -189,7 +185,7 @@ class ExperimentRunner(tune.Trainable):
         tf_checkpoint.save(file_prefix=f"{save_path}/checkpoint")
 
         state = self.algorithm.__getstate__()
-        with open(os.path.join(save_path, "state.json"), 'w') as f:
+        with open(os.path.join(save_path, f"state.json"), 'w') as f:
             json.dump(state, f)
 
     def _restore_algorithm(self, checkpoint_dir):
@@ -236,6 +232,7 @@ class ExperimentRunner(tune.Trainable):
         self._save_policy(checkpoint_dir)
         self._save_algorithm(checkpoint_dir)
 
+        self._save_iteration += 1
         return os.path.join(checkpoint_dir, '')
 
     def _restore(self, checkpoint_dir):

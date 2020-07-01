@@ -125,16 +125,16 @@ TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK = {
             DEFAULT_KEY: int(5e4),
         },
         'MorphingAnt': {
-            DEFAULT_KEY: int(1e6),
-            'v0': int(1e6),
+            DEFAULT_KEY: int(1e5),
+            'v0': int(1e5),
         },
         'MorphingDog': {
-            DEFAULT_KEY: int(1e6),
-            'v0': int(1e6),
+            DEFAULT_KEY: int(1e5),
+            'v0': int(1e5),
         },
         'MorphingDKitty': {
-            DEFAULT_KEY: int(1e6),
-            'v0': int(1e6),
+            DEFAULT_KEY: int(1e5),
+            'v0': int(1e5),
         },
     },
     'dm_control': {
