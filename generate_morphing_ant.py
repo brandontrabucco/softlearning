@@ -74,7 +74,7 @@ if __name__ == '__main__':
         '--domain', 'MorphingAnt',
         '--task', 'v0',
         '--exp-name', f'morphing-ant',
-        '--checkpoint-frequency', '1000',
+        '--checkpoint-frequency', '10',
         '--mode=local',
         '--cpus', f'{num_cpus}',
         '--gpus', f'{num_gpus}',
