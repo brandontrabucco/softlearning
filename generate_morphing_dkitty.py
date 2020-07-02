@@ -76,6 +76,7 @@ if __name__ == '__main__':
         '--exp-name', f'morphing-dkitty',
         '--checkpoint-frequency', '10',
         '--mode=local',
+        '--num-samples', '3'
         '--cpus', f'{num_cpus}',
         '--gpus', f'{num_gpus}',
         '--trial-cpus', f'{num_cpus // args.num_parallel}',
