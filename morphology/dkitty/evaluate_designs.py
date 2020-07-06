@@ -1,13 +1,9 @@
-from softlearning.environments.gym.mujoco.morphing_dkitty import DEFAULT_DKITTY
-from softlearning.environments.gym.mujoco.morphing_dkitty import UPPER_BOUND
-from softlearning.environments.gym.mujoco.morphing_dkitty import LOWER_BOUND
-from softlearning.environments.gym.mujoco.morphing_dkitty import Leg
 from examples.instrument import generate_experiment_kwargs
+from examples.development.variants import TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK
 from ray import tune
 from math import floor
-
-
-import numpy as np
+import pickle as pkl
+import os
 import argparse
 import importlib
 import ray
@@ -17,19 +13,27 @@ import tensorflow as tf
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser('MorphingDKitty')
-    parser.add_argument('--num_legs', type=int, default=4)
-    parser.add_argument('--dataset_size', type=int, default=100)
-    parser.add_argument('--num_parallel', type=int, default=12)
+    parser = argparse.ArgumentParser('EvaluateDKittyDesign')
+    parser.add_argument('--local-dir',
+                        type=str,
+                        default='./data')
+    parser.add_argument('--designs',
+                        type=str,
+                        default='designs.pkl')
+    parser.add_argument('--num-samples',
+                        type=int,
+                        default=1)
+    parser.add_argument('--num-parallel',
+                        type=int,
+                        default=1)
     args = parser.parse_args()
 
-    LEGS_SPEC = []
-    for i in range(args.dataset_size):
-        if i == 0 and len(DEFAULT_DKITTY) == args.num_legs:
-            LEGS_SPEC.append(DEFAULT_DKITTY)
-        else:
-            LEGS_SPEC.append([Leg(*np.random.uniform(
-                LOWER_BOUND, UPPER_BOUND)) for _ in range(args.num_legs)])
+    TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK[
+        'gym']['MorphingAnt']['v0'] = 3000000
+
+    with open(args.designs, "rb") as f:
+        designs = pkl.load(f)
+        dataset_size = len(designs)
 
     def run_example(example_module_name, example_argv, local_mode=False):
         """Run example locally, potentially parallelizing across cpus/gpus."""
@@ -41,14 +45,19 @@ if __name__ == '__main__':
 
         experiment_kwargs = generate_experiment_kwargs(variant_spec, example_args)
         experiment_kwargs['config'][
-            'dataset_id'] = tune.grid_search(list(range(args.dataset_size)))
+            'dataset_id'] = tune.grid_search(list(range(dataset_size)))
 
         experiment_kwargs['config'][
             'environment_params'][
             'training'][
             'kwargs'][
-            'legs'] = tune.sample_from(
-                lambda spec: LEGS_SPEC[spec.config.dataset_id])
+            'fixed_design'] = tune.sample_from(
+                lambda spec: designs[spec.config.dataset_id])
+        experiment_kwargs['config'][
+            'environment_params'][
+            'training'][
+            'kwargs'][
+            'expose_design'] = False
 
         ray.init(
             num_cpus=example_args.cpus,
@@ -73,10 +82,11 @@ if __name__ == '__main__':
         '--universe', 'gym',
         '--domain', 'MorphingDKitty',
         '--task', 'v0',
-        '--exp-name', f'morphing-dkitty',
+        '--exp-name', f'{os.path.basename(args.designs).replace(".pkl", "")}',
         '--checkpoint-frequency', '10',
         '--mode=local',
-        '--num-samples', '3',
+        '--local-dir', args.local_dir,
+        '--num-samples', f'{args.num_samples}',
         '--cpus', f'{num_cpus}',
         '--gpus', f'{num_gpus}',
         '--trial-cpus', f'{num_cpus // args.num_parallel}',

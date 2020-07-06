@@ -64,15 +64,15 @@ MUJOCO_ENVIRONMENT_SPECS = (
     },
     {
         'id': 'MorphingAnt-v0',
-        'entry_point': 'morphing_agents.agents.ant.env:DynamicDogEnv',
+        'entry_point': 'morphing_agents.mujoco:MorphingAntEnv',
     },
     {
         'id': 'MorphingDog-v0',
-        'entry_point': 'morphing_agents.agents.dog.env:DynamicDogEnv',
+        'entry_point': 'morphing_agents.mujoco:MorphingDogEnv',
     },
     {
         'id': 'MorphingDKitty-v0',
-        'entry_point': 'morphing_agents.agents.dkitty.env:DynamicDKittyEnv',
+        'entry_point': 'morphing_agents.mujoco:MorphingDKittyEnv',
     },
 )
 

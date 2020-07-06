@@ -1,13 +1,7 @@
-from softlearning.environments.gym.mujoco.morphing_dog import DEFAULT_DOG
-from softlearning.environments.gym.mujoco.morphing_dog import UPPER_BOUND
-from softlearning.environments.gym.mujoco.morphing_dog import LOWER_BOUND
-from softlearning.environments.gym.mujoco.morphing_dog import Leg
 from examples.instrument import generate_experiment_kwargs
+from examples.development.variants import TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK
 from ray import tune
 from math import floor
-
-
-import numpy as np
 import argparse
 import importlib
 import ray
@@ -17,19 +11,23 @@ import tensorflow as tf
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser('MorphingDog')
-    parser.add_argument('--num_legs', type=int, default=4)
-    parser.add_argument('--dataset_size', type=int, default=5)
-    parser.add_argument('--num_parallel', type=int, default=5)
+    parser = argparse.ArgumentParser('TrainDKittyOracle')
+    parser.add_argument('--local-dir',
+                        type=str,
+                        default='./data')
+    parser.add_argument('--num-legs',
+                        type=int,
+                        default=4)
+    parser.add_argument('--num-samples',
+                        type=int,
+                        default=1)
+    parser.add_argument('--num-parallel',
+                        type=int,
+                        default=1)
     args = parser.parse_args()
 
-    LEGS_SPEC = []
-    for i in range(args.dataset_size):
-        if i == 0 and len(DEFAULT_DOG) == args.num_legs:
-            LEGS_SPEC.append(DEFAULT_DOG)
-        else:
-            LEGS_SPEC.append([Leg(*np.random.uniform(
-                LOWER_BOUND, UPPER_BOUND)) for _ in range(args.num_legs)])
+    TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK[
+        'gym']['MorphingDKitty']['v0'] = 100000000
 
     def run_example(example_module_name, example_argv, local_mode=False):
         """Run example locally, potentially parallelizing across cpus/gpus."""
@@ -40,15 +38,21 @@ if __name__ == '__main__':
         trainable_class = example_module.get_trainable_class(example_args)
 
         experiment_kwargs = generate_experiment_kwargs(variant_spec, example_args)
-        experiment_kwargs['config'][
-            'dataset_id'] = tune.grid_search(list(range(args.dataset_size)))
-
+        # experiment_kwargs['config'][
+        #     'environment_params'][
+        #     'training'][
+        #     'kwargs'][
+        #     'num_legs'] = args.num_legs
         experiment_kwargs['config'][
             'environment_params'][
             'training'][
             'kwargs'][
-            'legs'] = tune.sample_from(
-                lambda spec: LEGS_SPEC[spec.config.dataset_id])
+            'fixed_design'] = None
+        experiment_kwargs['config'][
+            'environment_params'][
+            'training'][
+            'kwargs'][
+            'expose_design'] = True
 
         ray.init(
             num_cpus=example_args.cpus,
@@ -71,12 +75,13 @@ if __name__ == '__main__':
     run_example('examples.development', (
         '--algorithm', 'SAC',
         '--universe', 'gym',
-        '--domain', 'MorphingDog',
+        '--domain', 'MorphingDKitty',
         '--task', 'v0',
-        '--exp-name', f'morphing-dog',
+        '--exp-name', 'dkitty-oracle',
         '--checkpoint-frequency', '10',
         '--mode=local',
-        '--num-samples', '3',
+        '--local-dir', args.local_dir,
+        '--num-samples', f'{args.num_samples}',
         '--cpus', f'{num_cpus}',
         '--gpus', f'{num_gpus}',
         '--trial-cpus', f'{num_cpus // args.num_parallel}',
