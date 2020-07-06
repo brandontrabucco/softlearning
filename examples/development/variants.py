@@ -125,16 +125,16 @@ TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK = {
             DEFAULT_KEY: int(5e4),
         },
         'MorphingAnt': {
-            DEFAULT_KEY: int(1e5),
-            'v0': int(1e5),
+            DEFAULT_KEY: int(1e8),
+            'v0': int(1e8),
         },
         'MorphingDog': {
-            DEFAULT_KEY: int(1e5),
-            'v0': int(1e5),
+            DEFAULT_KEY: int(1e8),
+            'v0': int(1e8),
         },
         'MorphingDKitty': {
-            DEFAULT_KEY: int(1e5),
-            'v0': int(1e5),
+            DEFAULT_KEY: int(1e8),
+            'v0': int(1e8),
         },
     },
     'dm_control': {
@@ -300,17 +300,23 @@ ENVIRONMENT_PARAMS_PER_UNIVERSE_DOMAIN_TASK = {
         },
         'MorphingAnt': {
             'v0': {
-                'legs': DEFAULT_ANT,
+                'num_legs': 4,
+                'expose_design': True,
+                'fixed_design': None,
             }
         },
         'MorphingDog': {
             'v0': {
-                'legs': DEFAULT_DOG,
+                'num_legs': 4,
+                'expose_design': True,
+                'fixed_design': None,
             }
         },
         'MorphingDKitty': {
             'v0': {
-                'legs': DEFAULT_DKITTY,
+                # 'num_legs': 4,
+                'expose_design': True,
+                'fixed_design': None,
             }
         },
         'Humanoid': {  # 17 DoF
