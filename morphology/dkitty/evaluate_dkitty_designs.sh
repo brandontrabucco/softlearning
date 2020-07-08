@@ -14,7 +14,7 @@ cp -r $PACKAGES/.mujoco $HOME/.mujoco
 ln -s $PACKAGES/.mujoco/mujoco200_linux $PACKAGES/.mujoco/mujoco200
 
 python $PACKAGES/softlearning/morphology/dkitty/evaluate_designs.py \
-    --local-dir /global/scratch/btrabucco/data \ 
+    --local-dir /global/scratch/btrabucco/data \
     --designs /global/scratch/btrabucco/designs/dkitty/forward_model.pkl \
     --num-samples 3 \
     --num-parallel 32 

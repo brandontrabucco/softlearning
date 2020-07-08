@@ -67,12 +67,12 @@ if __name__ == '__main__':
                     'training'])
         experiment_kwargs['config'][
             'environment_params'][
-            'training'][
+            'evaluation'][
             'kwargs'][
             'fixed_design'] = DEFAULT_DESIGN
         experiment_kwargs['config'][
             'environment_params'][
-            'training'][
+            'evaluation'][
             'kwargs'][
             'expose_design'] = True
 
