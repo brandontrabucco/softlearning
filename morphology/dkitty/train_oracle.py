@@ -1,7 +1,8 @@
 from examples.instrument import generate_experiment_kwargs
 from examples.development.variants import TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK
+from morphing_agents.mujoco.dkitty.designs import DEFAULT_DESIGN
+from copy import deepcopy
 from ray import tune
-from math import floor
 import argparse
 import importlib
 import ray
@@ -37,17 +38,33 @@ if __name__ == '__main__':
         variant_spec = example_module.get_variant_spec(example_args)
         trainable_class = example_module.get_trainable_class(example_args)
 
-        experiment_kwargs = generate_experiment_kwargs(variant_spec, example_args)
-        # experiment_kwargs['config'][
-        #     'environment_params'][
-        #     'training'][
-        #     'kwargs'][
-        #     'num_legs'] = args.num_legs
+        experiment_kwargs = generate_experiment_kwargs(variant_spec,
+                                                       example_args)
+
+        # Training environment parameters
         experiment_kwargs['config'][
             'environment_params'][
             'training'][
             'kwargs'][
             'fixed_design'] = None
+        experiment_kwargs['config'][
+            'environment_params'][
+            'training'][
+            'kwargs'][
+            'expose_design'] = True
+
+        # Evaluation environment parameters
+        experiment_kwargs['config'][
+            'environment_params'][
+            'evaluation'] = deepcopy(
+                experiment_kwargs['config'][
+                    'environment_params'][
+                    'training'])
+        experiment_kwargs['config'][
+            'environment_params'][
+            'training'][
+            'kwargs'][
+            'fixed_design'] = DEFAULT_DESIGN
         experiment_kwargs['config'][
             'environment_params'][
             'training'][
