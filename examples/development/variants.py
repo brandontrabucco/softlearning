@@ -7,9 +7,9 @@ import numpy as np
 from softlearning.utils.git import get_git_rev
 from softlearning.utils.misc import get_host_name
 from softlearning.utils.dict import deep_update
-from softlearning.environments.gym.mujoco.morphing_dog import DEFAULT_DOG
-from softlearning.environments.gym.mujoco.morphing_ant import DEFAULT_ANT
-from softlearning.environments.gym.mujoco.morphing_dkitty import DEFAULT_DKITTY
+from morphing_agents.mujoco.ant.designs import DEFAULT_DESIGN as DEFAULT_ANT
+from morphing_agents.mujoco.dog.designs import DEFAULT_DESIGN as DEFAULT_DOG
+from morphing_agents.mujoco.dkitty.designs import DEFAULT_DESIGN as DEFAULT_DKITTY
 
 DEFAULT_KEY = "__DEFAULT_KEY__"
 
@@ -136,6 +136,18 @@ TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK = {
             DEFAULT_KEY: int(1e8),
             'v0': int(1e8),
         },
+        'DefaultAnt': {
+            DEFAULT_KEY: int(1e8),
+            'v0': int(1e8),
+        },
+        'DefaultDog': {
+            DEFAULT_KEY: int(1e8),
+            'v0': int(1e8),
+        },
+        'DefaultDKitty': {
+            DEFAULT_KEY: int(1e8),
+            'v0': int(1e8),
+        },
     },
     'dm_control': {
         # BENCHMARKING
@@ -254,6 +266,18 @@ MAX_PATH_LENGTH_PER_UNIVERSE_DOMAIN_TASK = {
             DEFAULT_KEY: 1000,
             'v0': 1000,
         },
+        'DefaultAnt': {
+            DEFAULT_KEY: 1000,
+            'v0': 1000,
+        },
+        'DefaultDog': {
+            DEFAULT_KEY: 1000,
+            'v0': 1000,
+        },
+        'DefaultDKitty': {
+            DEFAULT_KEY: 1000,
+            'v0': 1000,
+        },
     },
 }
 
@@ -274,6 +298,18 @@ EPOCH_LENGTH_PER_UNIVERSE_DOMAIN_TASK = {
             'v0': 1000,
         },
         'MorphingDKitty': {
+            DEFAULT_KEY: 1000,
+            'v0': 1000,
+        },
+        'DefaultAnt': {
+            DEFAULT_KEY: 1000,
+            'v0': 1000,
+        },
+        'DefaultDog': {
+            DEFAULT_KEY: 1000,
+            'v0': 1000,
+        },
+        'DefaultDKitty': {
             DEFAULT_KEY: 1000,
             'v0': 1000,
         },
@@ -317,6 +353,27 @@ ENVIRONMENT_PARAMS_PER_UNIVERSE_DOMAIN_TASK = {
                 # 'num_legs': 4,
                 'expose_design': True,
                 'fixed_design': None,
+            }
+        },
+        'DefaultAnt': {
+            'v0': {
+                'num_legs': 4,
+                'expose_design': True,
+                'fixed_design': DEFAULT_ANT,
+            }
+        },
+        'DefaultDog': {
+            'v0': {
+                'num_legs': 4,
+                'expose_design': True,
+                'fixed_design': DEFAULT_DOG,
+            }
+        },
+        'DefaultDKitty': {
+            'v0': {
+                # 'num_legs': 4,
+                'expose_design': True,
+                'fixed_design': DEFAULT_DKITTY,
             }
         },
         'Humanoid': {  # 17 DoF

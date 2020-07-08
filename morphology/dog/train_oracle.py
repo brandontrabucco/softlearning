@@ -84,6 +84,5 @@ if __name__ == '__main__':
         '--num-samples', f'{args.num_samples}',
         '--cpus', f'{num_cpus}',
         '--gpus', f'{num_gpus}',
-        '--server-port', '9023',
         '--trial-cpus', f'{num_cpus // args.num_parallel}',
         '--trial-gpus', f'{num_gpus / args.num_parallel}'))
