@@ -86,4 +86,4 @@ if __name__ == '__main__':
         '--gpus', f'{num_gpus}',
         '--server-port', '9023',
         '--trial-cpus', f'{num_cpus // args.num_parallel}',
-        '--trial-gpus', f'{floor(num_gpus/args.num_parallel/0.1)*0.1}'))
+        '--trial-gpus', f'{num_gpus / args.num_parallel}'))
