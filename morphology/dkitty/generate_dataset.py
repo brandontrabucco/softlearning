@@ -1,5 +1,6 @@
 from morphing_agents.mujoco.dkitty.designs import sample_uniformly
 from morphing_agents.mujoco.dkitty.designs import DEFAULT_DESIGN
+from morphing_agents.mujoco.dkitty.env import MorphingDKittyEnv
 from examples.instrument import generate_experiment_kwargs
 from examples.development.variants import TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK
 from ray import tune
@@ -32,11 +33,16 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK[
-        'gym']['MorphingAnt']['v0'] = 100000
+        'gym']['MorphingDKitty']['v0'] = 100000
 
     designs = [DEFAULT_DESIGN]
-    for i in range(args.dataset_size - 1):
-        designs.append(sample_uniformly(num_legs=args.num_legs))
+    while len(designs) < args.dataset_size:
+        try:
+            d = sample_uniformly(num_legs=args.num_legs)
+            MorphingDKittyEnv(fixed_design=d)
+            designs.append(d)
+        except AssertionError:
+            print(f"resampling design that errored: {d}")
 
     def run_example(example_module_name, example_argv, local_mode=False):
         """Run example locally, potentially parallelizing across cpus/gpus."""
