@@ -29,7 +29,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK[
-        'gym']['MorphingAnt']['v0'] = 3000000
+        'gym']['MorphingDog']['v0'] = 100000
 
     with open(args.designs, "rb") as f:
         designs = pkl.load(f)
@@ -89,5 +89,6 @@ if __name__ == '__main__':
         '--num-samples', f'{args.num_samples}',
         '--cpus', f'{num_cpus}',
         '--gpus', f'{num_gpus}',
+        '--server-port', '9032',
         '--trial-cpus', f'{num_cpus // args.num_parallel}',
         '--trial-gpus', f'{num_gpus / args.num_parallel}'))

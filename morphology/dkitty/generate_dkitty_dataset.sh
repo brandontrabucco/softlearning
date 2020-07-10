@@ -14,7 +14,8 @@ cp -r $PACKAGES/.mujoco $HOME/.mujoco
 ln -s $PACKAGES/.mujoco/mujoco200_linux $PACKAGES/.mujoco/mujoco200
 
 python $PACKAGES/softlearning/morphology/dkitty/generate_dataset.py \
-    --local-dir /global/scratch/btrabucco/data \ 
-    --dataset-size 2000 \
+    --local-dir /global/scratch/btrabucco/data \
+    --num-legs 4 \
+    --dataset-size 100 \
     --num-samples 3 \
     --num-parallel 32 
