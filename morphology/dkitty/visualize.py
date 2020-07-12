@@ -1,5 +1,8 @@
 from morphing_agents.mujoco.dkitty.env import MorphingDKittyEnv
 from morphing_agents.mujoco.dkitty.designs import DEFAULT_DESIGN
+from morphing_agents.mujoco.dkitty.elements import LEG_UPPER_BOUND
+from morphing_agents.mujoco.dkitty.elements import LEG_LOWER_BOUND
+from morphing_agents.mujoco.dkitty.elements import LEG
 
 
 import numpy as np
@@ -17,22 +20,27 @@ if __name__ == '__main__':
 
     frames = []
 
+    ub = np.array(list(LEG_UPPER_BOUND))
+    lb = np.array(list(LEG_LOWER_BOUND))
+    scale = (ub - lb) / 2
+
     e = MorphingDKittyEnv(fixed_design=DEFAULT_DESIGN)
     e.reset()
     for i in range(args.episode_length):
         o, r, d, _ = e.step(e.action_space.sample())
-        frames.append(e.render(mode='rgb_array'))
-        if d:
-            break
+        #frames.append(e.render(mode='rgb_array'))
+        e.render(mode='human')
 
-    e = MorphingDKittyEnv()
     for n in range(args.num_episodes):
+        e = MorphingDKittyEnv(fixed_design=[
+            LEG(*np.clip(np.array(
+                leg) + np.random.normal(0, scale / 8), lb, ub))
+            for leg in DEFAULT_DESIGN])
         e.reset()
         for i in range(args.episode_length):
             o, r, d, _ = e.step(e.action_space.sample())
-            frames.append(e.render(mode='rgb_array'))
-            if d:
-                break
+            #frames.append(e.render(mode='rgb_array'))
+            e.render(mode='human')
 
     frames = np.array(frames)
     skvideo.io.vwrite("dkitty.mp4", frames)

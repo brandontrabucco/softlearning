@@ -45,7 +45,6 @@ if __name__ == '__main__':
     ub = np.array(list(LEG_UPPER_BOUND))
     lb = np.array(list(LEG_LOWER_BOUND))
     scale = (ub - lb) / 2
-    default = np.concatenate(DEFAULT_DESIGN)
 
     designs = [DEFAULT_DESIGN]
     while len(designs) < args.dataset_size:
@@ -54,9 +53,8 @@ if __name__ == '__main__':
             if args.method == 'uniform':
                 d = sample_uniformly(num_legs=args.num_legs)
             elif args.method == 'curated':
-                d = [LEG(*np.clip(
-                    np.array(leg) + np.random.normal(0, scale / 8),
-                    lb, ub))
+                d = [LEG(*np.clip(np.array(
+                    leg) + np.random.normal(0, scale / 8), lb, ub))
                     for leg in DEFAULT_DESIGN]
             else:
                 d = DEFAULT_DESIGN
