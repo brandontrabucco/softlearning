@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
             for e in tf.compat.v1.train.summary_iterator(t):
                 for v in e.summary.value:
-                    if v.tag == args.tag:
+                    if v.tag == args.tag and e.step <= 100:
                         path_return += v.simple_value
                         path.append([name,
                                      "All",

@@ -18,4 +18,5 @@ python $PACKAGES/softlearning/morphology/ant/generate_dataset.py \
     --num-legs 4 \
     --dataset-size 100 \
     --num-samples 3 \
-    --num-parallel 32 
+    --num-parallel 32 \
+    --method curated

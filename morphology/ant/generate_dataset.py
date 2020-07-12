@@ -1,5 +1,8 @@
 from morphing_agents.mujoco.ant.designs import sample_uniformly
 from morphing_agents.mujoco.ant.designs import DEFAULT_DESIGN
+from morphing_agents.mujoco.ant.elements import LEG_UPPER_BOUND
+from morphing_agents.mujoco.ant.elements import LEG_LOWER_BOUND
+from morphing_agents.mujoco.ant.elements import LEG
 from morphing_agents.mujoco.ant.env import MorphingAntEnv
 from examples.instrument import generate_experiment_kwargs
 from examples.development.variants import TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK
@@ -10,6 +13,7 @@ import importlib
 import ray
 import multiprocessing
 import tensorflow as tf
+import numpy as np
 
 
 if __name__ == '__main__':
@@ -30,15 +34,33 @@ if __name__ == '__main__':
     parser.add_argument('--num-parallel',
                         type=int,
                         default=1)
+    parser.add_argument('--method',
+                        type=str,
+                        choices=['uniform', 'curated'])
     args = parser.parse_args()
 
     TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK[
         'gym']['MorphingAnt']['v0'] = 100000
 
+    ub = np.array(list(LEG_UPPER_BOUND))
+    lb = np.array(list(LEG_LOWER_BOUND))
+    scale = (ub - lb) / 2
+    default = np.concatenate(DEFAULT_DESIGN)
+
     designs = [DEFAULT_DESIGN]
     while len(designs) < args.dataset_size:
         try:
-            d = sample_uniformly(num_legs=args.num_legs)
+
+            if args.method == 'uniform':
+                d = sample_uniformly(num_legs=args.num_legs)
+            elif args.method == 'curated':
+                d = [LEG(*np.clip(
+                    np.array(leg) + np.random.normal(0, scale / 8),
+                    lb, ub))
+                    for leg in DEFAULT_DESIGN]
+            else:
+                d = DEFAULT_DESIGN
+
             MorphingAntEnv(fixed_design=d)
             designs.append(d)
         except AssertionError:
@@ -91,7 +113,7 @@ if __name__ == '__main__':
         '--universe', 'gym',
         '--domain', 'MorphingAnt',
         '--task', 'v0',
-        '--exp-name', 'ant-dataset',
+        '--exp-name', f'ant-dataset-{args.method}',
         '--checkpoint-frequency', '10',
         '--mode=local',
         '--local-dir', args.local_dir,
