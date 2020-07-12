@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
             MorphingDogEnv(fixed_design=d)
             designs.append(d)
-        except AssertionError:
+        except Exception:
             print(f"resampling design that errored: {d}")
 
     def run_example(example_module_name, example_argv, local_mode=False):
