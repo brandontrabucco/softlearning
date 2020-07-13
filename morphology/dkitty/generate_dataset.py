@@ -40,7 +40,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK[
-        'gym']['MorphingDKitty']['v0'] = 100000
+        'gym']['MorphingDKitty']['v0'] = 500000
 
     ub = np.array(list(LEG_UPPER_BOUND))
     lb = np.array(list(LEG_LOWER_BOUND))

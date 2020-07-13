@@ -29,7 +29,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     TOTAL_STEPS_PER_UNIVERSE_DOMAIN_TASK[
-        'gym']['MorphingAnt']['v0'] = 100000
+        'gym']['MorphingDKitty']['v0'] = 500000
 
     with open(args.designs, "rb") as f:
         designs = pkl.load(f)
